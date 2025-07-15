@@ -78,7 +78,6 @@ return {
       clangd = {},
       cpptools = {},
       delve = {},
-      debugpy = {},
       gopls = {
         settings = {
           -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md

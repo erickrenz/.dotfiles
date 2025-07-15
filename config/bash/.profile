@@ -21,8 +21,6 @@ if [ -f /home/ekrenz/.profile-tmp ]; then
     . /home/ekrenz/.profile-tmp
 fi
 
-alias v="nvim"
-alias vim="nvim"
 alias nv="nvim ."
 
 alias l="ls -al --color=auto"
