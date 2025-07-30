@@ -29,6 +29,11 @@ compinit
 # vim bindings
 bindkey -v
 
+# bindings
+bindkey -s ^F "tmux-sessionizer\n"
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
+
 # aliases
 alias up="brew upgrade"
 alias l="ls -al --color=auto"
@@ -38,8 +43,6 @@ alias nv="nvim ."
 # scripts
 export PATH="$HOME/.dotfiles/bin:$PATH"
 
-# tmux sessionizer
-bindkey -s ^f "tmux-sessionizer\n"
 
 # fzf
 source <(fzf --zsh)
