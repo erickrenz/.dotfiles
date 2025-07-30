@@ -1,6 +1,5 @@
 brew 'zsh'
 brew 'bash'
-brew 'stow'
 brew 'git'
 
 brew 'neovim'
