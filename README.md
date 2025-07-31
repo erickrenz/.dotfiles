@@ -2,5 +2,5 @@
 
 ## MacOS Quick Start
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/erickrenz/.dotfiles/main/setup.sh)"
+git clone https://github.com/erickrenz/.dotfiles.git ~/.dotfiles
 ```
