@@ -1,31 +1,62 @@
 return {
-  'saghen/blink.cmp',
-  event = 'VimEnter',
+  'hrsh7th/nvim-cmp',
+  event = 'InsertEnter',
   dependencies = {
-    { 'L3MON4D3/LuaSnip', version = 'v2.*', build = 'make install_jsregexp' },
-    'folke/lazydev.nvim',
+    { 'L3MON4D3/LuaSnip', build = 'make install_jsregexp' },
+    'saadparwaiz1/cmp_luasnip',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-buffer',
   },
-  opts = {
-    keymap = {
-      preset = 'default',
-    },
-    appearance = {
-      nerd_font_variant = 'mono',
-    },
-    completion = {
-      -- By default, you may press `<c-space>` to show the documentation.
-      -- Optionally, set `auto_show = true` to show the documentation after a delay.
-      documentation = { auto_show = false, auto_show_delay_ms = 500 },
-    },
-    sources = {
-      default = { 'lsp', 'path', 'snippets', 'lazydev' },
-      providers = {
-        lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+  config = function()
+    local cmp = require 'cmp'
+    local luasnip = require 'luasnip'
+    luasnip.config.setup {}
+
+    cmp.setup {
+      snippet = {
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+        end,
       },
-    },
-    snippets = { preset = 'luasnip' },
-    fuzzy = { implementation = 'lua' },
-    -- Shows a signature help window while you type arguments for a function
-    signature = { enabled = true },
-  },
+      completion = { completeopt = 'menu,menuone,noinsert' },
+
+      mapping = cmp.mapping.preset.insert {
+        ['<C-n>'] = cmp.mapping.select_next_item(),
+        ['<C-p>'] = cmp.mapping.select_prev_item(),
+
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+
+        ['<C-y>'] = cmp.mapping.confirm { select = true },
+        ['<C-Space>'] = cmp.mapping.complete(),
+
+        ['<CR>'] = nil,
+        ['<Tab>'] = nil,
+        ['<S-Tab>'] = nil,
+
+        ['<C-l>'] = cmp.mapping(function()
+          if luasnip.expand_or_locally_jumpable() then
+            luasnip.expand_or_jump()
+          end
+        end, { 'i', 's' }),
+        ['<C-h>'] = cmp.mapping(function()
+          if luasnip.locally_jumpable(-1) then
+            luasnip.jump(-1)
+          end
+        end, { 'i', 's' }),
+      },
+      sources = {
+        {
+          name = 'lazydev',
+          -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
+          group_index = 0,
+        },
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+        { name = 'path' },
+        { name = 'buffer' },
+      },
+    }
+  end,
 }
