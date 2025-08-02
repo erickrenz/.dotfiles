@@ -12,7 +12,7 @@ command_timeout = 1000
 # error_symbol = '[➜](bold red)' 
 
 [aws]
-symbol = "  "
+symbol = " "
 
 [buf]
 symbol = " "
