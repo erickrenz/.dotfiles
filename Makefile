@@ -1,4 +1,4 @@
-all: pacman bash dirs nvim tmux starship
+all: pacman bash dirs hypr waybar nvim tmux starship
 
 PHONY: pacman
 pacman:
@@ -15,6 +15,14 @@ bash:
 dirs:
 	mkdir -p $(HOME)/.config
 	mkdir -p $(HOME)/code
+
+.PHONY: hypr
+hypr:
+	ln -sf $(HOME)/.dotfiles/.config/hypr $(HOME)/.config/hypr
+
+.PHONY: waybar
+waybar:
+	ln -sf $(HOME)/.dotfiles/.config/waybar $(HOME)/.config/waybar
 
 .PHONY: nvim
 nvim:
