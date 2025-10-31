@@ -1,4 +1,15 @@
-all: dirs nvim tmux starship
+all: pacman bash dirs nvim tmux starship
+
+PHONY: pacman
+pacman:
+	sudo pacman -Syu --needed - < packages.txt
+
+.PHONY: bash
+bash:
+	ln -sf $(HOME)/.dotfiles/.config/bash/.bash_profile $(HOME)/.bash_profile
+	ln -sf $(HOME)/.dotfiles/.config/bash/.bashrc $(HOME)/.bashrc
+	ln -sf $(HOME)/.dotfiles/.config/bash/.profile $(HOME)/.profile
+	ln -sf $(HOME)/.dotfiles/.config/bash/.zshrc $(HOME)/.zshrc
 
 .PHONY: dirs
 dirs:
@@ -7,11 +18,6 @@ dirs:
 
 .PHONY: nvim
 nvim:
-	@if [ -d $(HOME)/.config/nvim ] && ! [ -L $(HOME)/.config/nvim ]; then \
-		mv $(HOME)/.config/nvim $(HOME)/.config/.nvim.pre-dotfiles; \
-	elif [ -d $(HOME)/.config/nvim ];  then \
-		rm -rf $(HOME)/.config/nvim; \
-	fi; 
 	ln -sf $(HOME)/.dotfiles/.config/nvim $(HOME)/.config/nvim 
 
 .PHONY: tmux
