@@ -18,14 +18,23 @@ dirs:
 
 .PHONY: hypr
 hypr:
+	if [ -d $(HOME)/.config/hypr ];  then \
+		rm -rf $(HOME)/.config/hypr; \
+	fi; 
 	ln -sf $(HOME)/.dotfiles/.config/hypr $(HOME)/.config/hypr
 
 .PHONY: waybar
 waybar:
+	if [ -d $(HOME)/.config/waybar ];  then \
+		rm -rf $(HOME)/.config/waybar; \
+	fi; 
 	ln -sf $(HOME)/.dotfiles/.config/waybar $(HOME)/.config/waybar
 
 .PHONY: nvim
 nvim:
+	if [ -d $(HOME)/.config/nvim ];  then \
+		rm -rf $(HOME)/.config/nvim; \
+	fi; 
 	ln -sf $(HOME)/.dotfiles/.config/nvim $(HOME)/.config/nvim 
 
 .PHONY: tmux
