@@ -42,3 +42,8 @@ qt6-wayland
 polkit-kde-agent
 grim
 slurp
+sway
+swayidle
+swaylock
+swaybg
+alacritty

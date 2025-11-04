@@ -1,0 +1,19 @@
+[general]
+import = [
+    "~/.config/alacritty/themes/tokyo-night.toml"
+]
+
+[env]
+# term = "xterm-256color"
+term = "screen-256color"
+
+[font]
+normal = { family="JetBrainsMono Nerd Font" } # with ligatures
+# normal = { family="JetBrainsMono" } # no ligatures
+size = 12
+
+[keyboard]
+bindings = [
+    { key = "C", mods = "Control", action = "Copy" },
+    { key = "V", mods = "Control", action = "Paste" },
+]

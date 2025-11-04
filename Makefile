@@ -1,4 +1,4 @@
-all: pacman bash dirs hypr waybar nvim tmux starship
+all: pacman bash dirs hypr sway swaylock rofi waybar nvim tmux starship ghostty alacritty
 
 PHONY: pacman
 pacman:
@@ -20,21 +20,42 @@ dirs:
 hypr:
 	if [ -d $(HOME)/.config/hypr ];  then \
 		rm -rf $(HOME)/.config/hypr; \
-	fi; 
+	fi;
 	ln -sf $(HOME)/.dotfiles/.config/hypr $(HOME)/.config/hypr
+
+.PHONY: swaylock
+swaylock:
+	if [ -d $(HOME)/.config/swaylock ];  then \
+		rm -rf $(HOME)/.config/swaylock; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/swaylock $(HOME)/.config/swaylock
+
+.PHONY: sway
+sway:
+	if [ -d $(HOME)/.config/sway ];  then \
+		rm -rf $(HOME)/.config/sway; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/sway $(HOME)/.config/sway
+
+.PHONY: rofi
+rofi:
+	if [ -d $(HOME)/.config/rofi ];  then \
+		rm -rf $(HOME)/.config/rofi; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/rofi $(HOME)/.config/rofi
 
 .PHONY: waybar
 waybar:
 	if [ -d $(HOME)/.config/waybar ];  then \
 		rm -rf $(HOME)/.config/waybar; \
-	fi; 
+	fi;
 	ln -sf $(HOME)/.dotfiles/.config/waybar $(HOME)/.config/waybar
 
 .PHONY: nvim
 nvim:
 	if [ -d $(HOME)/.config/nvim ];  then \
 		rm -rf $(HOME)/.config/nvim; \
-	fi; 
+	fi;
 	ln -sf $(HOME)/.dotfiles/.config/nvim $(HOME)/.config/nvim 
 
 .PHONY: tmux
@@ -44,3 +65,17 @@ tmux:
 .PHONY: starship
 starship:
 	ln -sf $(HOME)/.dotfiles/.config/starship.toml $(HOME)/.config/starship.toml
+
+.PHONY: ghostty
+ghostty:
+	if [ -d $(HOME)/.config/ghostty ];  then \
+		rm -rf $(HOME)/.config/ghostty; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/ghostty $(HOME)/.config/ghostty
+
+.PHONY: alacritty
+alacritty:
+	if [ -d $(HOME)/.config/alacritty ];  then \
+		rm -rf $(HOME)/.config/alacritty; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/alacritty $(HOME)/.config/alacritty
