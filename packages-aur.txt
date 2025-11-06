@@ -1,0 +1,4 @@
+ast-firmware
+aic94xx-firmware
+upd72020x-fw
+zoom

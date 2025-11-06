@@ -1,8 +1,22 @@
-all: pacman bash dirs hypr sway swaylock rofi waybar nvim tmux starship ghostty alacritty
+all: pacman paru rustup bash dirs hypr sway swaylock rofi waybar nvim tmux starship ghostty alacritty
 
 PHONY: pacman
 pacman:
 	sudo pacman -Syu --needed - < packages.txt
+
+PHONY: paru
+paru:
+	@if [ -d "$(HOME)/paru" ]; then \
+		cd $(HOME)/paru && git pull --rebase ; \
+	else \
+		git clone https://aur.archlinux.org/$(PKGNAME).git $(HOME)/paru/ ; \
+	fi
+	cd $(HOME)/paru && makepkg -si
+	paru -S --needed - < packages-aur.txt
+
+PHONY: rustup
+rustup:
+	rustup default stable
 
 .PHONY: bash
 bash:

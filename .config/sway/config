@@ -9,7 +9,7 @@ set $down j
 set $up k
 set $right l
 
-set $term ghostty
+set $term alacritty
 set $rofi_cmd rofi -terminal '$term'
 
 set $menu $rofi_cmd -show combi -combi-modes drun#run -modes combi
@@ -120,6 +120,7 @@ input * xkb_options caps:escape
 input "type:touchpad" {
     tap enabled
     tap_button_map lrm
+    click_method clickfinger
 }
 
 include '$(/usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "$HOME/.config/sway/config.d/*.conf")'
