@@ -1,4 +1,7 @@
-all: pacman paru rustup bash dirs hypr sway swaylock rofi waybar nvim tmux starship ghostty alacritty
+all: pacman paru rustup bash dirs \
+	hypr sway swaylock rofi waybar \
+	nvim tmux starship ghostty alacritty \
+	ufw ssh_config pacman_config
 
 PHONY: pacman
 pacman:
@@ -93,3 +96,24 @@ alacritty:
 		rm -rf $(HOME)/.config/alacritty; \
 	fi;
 	ln -sf $(HOME)/.dotfiles/.config/alacritty $(HOME)/.config/alacritty
+
+.PHONY: ufw
+ufw:
+	sudo systemctl enable ufw
+	sudo ufw default deny incoming
+	sudo ufw default allow outgoing
+	sudo ufw allow ssh
+	sudo ufw limit ssh
+	sudo ufw --force enable
+	sudo ufw status verbose
+
+.PHONY: ssh_config
+ssh_config:
+	sudo systemctl enable sshd
+	sudo ln -sf $(HOME)/.dotfiles/etc/ssh.conf /etc/ssh/sshd_config.d/disable-passwords.conf
+	sudo sshd -t 
+	sudo systemctl restart sshd
+
+.PHONY: pacman_config
+pacman_config:
+	sudo ln -sf $(HOME)/.dotfiles/etc/pacman.conf /etc/pacman.conf
