@@ -51,3 +51,5 @@ alacritty
 protobuf
 linux-firmware-qlogic
 ufw
+fuse2
+openai-codex
