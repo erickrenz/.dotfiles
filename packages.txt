@@ -53,3 +53,4 @@ linux-firmware-qlogic
 ufw
 fuse2
 openai-codex
+aws-cli-v2
