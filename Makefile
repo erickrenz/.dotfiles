@@ -1,6 +1,6 @@
 all: pacman paru rustup bash dirs \
 	hypr sway swaylock rofi waybar \
-	nvim tmux starship ghostty alacritty \
+	nvim tmux git_config starship ghostty alacritty \
 	ufw ssh_config pacman_config
 
 PHONY: pacman
@@ -78,6 +78,10 @@ nvim:
 .PHONY: tmux
 tmux:
 	ln -sf $(HOME)/.dotfiles/.config/.tmux.conf $(HOME)/.tmux.conf
+
+.PHONY: git_config
+git_config:
+	ln -sf $(HOME)/.dotfiles/.config/.gitconfig $(HOME)/.gitconfig
 
 .PHONY: starship
 starship:
