@@ -25,5 +25,8 @@ eval "$(fzf --bash)"
 # tmux sessionizer
 bind -x '"\C-f":tmux-sessionizer'
 
+# rust
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # starship
 eval "$(starship init bash)"
