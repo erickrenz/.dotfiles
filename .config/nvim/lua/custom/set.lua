@@ -34,3 +34,8 @@ vim.o.mouse = 'a'
 vim.o.confirm = true
 vim.o.showmode = false
 vim.o.termguicolors = true
+
+-- vim.cmd.colorscheme 'default'
+-- vim.cmd.colorscheme 'habamax'
+-- vim.cmd.colorscheme 'zaibatsu'
+vim.cmd.colorscheme 'sorbet'

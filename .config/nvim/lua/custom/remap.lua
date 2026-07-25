@@ -5,7 +5,8 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>')
 
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostics to location list' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Line diagnostic' })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 
