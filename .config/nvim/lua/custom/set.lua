@@ -6,7 +6,7 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
+    vim.o.clipboard = 'unnamedplus'
 end)
 
 vim.o.hlsearch = false
@@ -36,6 +36,5 @@ vim.o.showmode = false
 vim.o.termguicolors = true
 
 -- vim.cmd.colorscheme 'default'
--- vim.cmd.colorscheme 'habamax'
--- vim.cmd.colorscheme 'zaibatsu'
-vim.cmd.colorscheme 'sorbet'
+vim.cmd.colorscheme 'habamax'
+-- vim.cmd.colorscheme 'sorbet'
