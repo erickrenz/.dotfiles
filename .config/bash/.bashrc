@@ -30,3 +30,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # starship
 eval "$(starship init bash)"
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+[[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
+# <<< grok installer <<<
