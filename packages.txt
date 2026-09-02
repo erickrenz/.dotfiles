@@ -54,3 +54,4 @@ ufw
 fuse2
 openai-codex
 aws-cli-v2
+mise
