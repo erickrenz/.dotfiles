@@ -1,9 +1,27 @@
 vim.pack.add({
+  'https://github.com/folke/tokyonight.nvim',
+  'https://github.com/nvim-lualine/lualine.nvim',
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-telescope/telescope.nvim',
   'https://github.com/tpope/vim-fugitive',
   'https://github.com/lewis6991/gitsigns.nvim',
 }, { load = true, confirm = false })
+
+require('tokyonight').setup {
+  style = 'night',
+  on_colors = function() end,
+  on_highlights = function() end,
+}
+vim.cmd.colorscheme 'tokyonight'
+
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'tokyonight',
+    component_separators = '|',
+    section_separators = '',
+  },
+}
 
 require('gitsigns').setup()
 

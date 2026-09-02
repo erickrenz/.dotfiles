@@ -1,5 +1,4 @@
 require 'custom.set'
-require 'custom.statusline'
 vim.cmd.packadd 'nvim.undotree'
 require 'custom.pack'
 require 'custom.remap'

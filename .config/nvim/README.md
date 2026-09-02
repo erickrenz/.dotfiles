@@ -141,8 +141,8 @@ The undotree plugin was removed. Use Neovim's built-in command:
 
 ### Lualine
 
-lualine was removed. A small native `statusline` is configured in
-`lua/custom/set.lua`.
+[`nvim-lualine/lualine.nvim`](https://github.com/nvim-lualine/lualine.nvim) is
+installed through `vim.pack` and uses the TokyoNight theme.
 
 ### Todo Comments
 
@@ -166,18 +166,8 @@ Useful commands:
 
 ### Colorscheme
 
-tokyonight.nvim was removed. The default is now the built-in `slate` colorscheme.
-
-Try nearby built-in dark schemes:
-
-```vim
-:colorscheme slate
-:colorscheme sorbet
-:colorscheme torte
-:colorscheme industry
-:colorscheme zaibatsu
-:colorscheme habamax
-```
+[`folke/tokyonight.nvim`](https://github.com/folke/tokyonight.nvim) is installed
+through `vim.pack` and configured with its `night` style.
 
 ## Telescope Keys Kept For Now
 
