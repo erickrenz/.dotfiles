@@ -56,3 +56,4 @@ openai-codex
 aws-cli-v2
 mise
 opencode
+bun
