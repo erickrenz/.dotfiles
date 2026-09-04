@@ -35,3 +35,6 @@ eval "$(starship init bash)"
 export PATH="$HOME/.grok/bin:$PATH"
 [[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
 # <<< grok installer <<<
+
+# Added by Antigravity CLI installer
+export PATH="/home/ekrenz/.local/bin:$PATH"
