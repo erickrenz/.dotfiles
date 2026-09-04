@@ -1,0 +1,37 @@
+onboarding = false
+
+[theme]
+name = "tokyo-night"
+auto_switch = false
+
+# remove floating panes
+
+# Use tmux default bindings
+[keys]
+split_vertical = "prefix+%"
+split_horizontal = "prefix+\""
+
+toggle_sidebar = "prefix+b"
+
+workspace_picker = "prefix+s"
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
+navigate_pane_left = ""
+navigate_pane_down = ""
+navigate_pane_up = ""
+navigate_pane_right = ""
+
+# agent_picker = "prefix+w"      # Note: This doesn't exist yet...
+focus_agent = "alt+1..9"         # "prefix+alt+1..9"
+switch_workspace = "ctrl+1..9"   # "prefix+shift+1..9"
+# switch_tab = "prefix+1..9"
+
+
+[ui]
+confirm_close = false
+prompt_new_tab_name = false
+pane_outer_borders = false
+pane_gaps = false
+
+agent_panel_sort = "priority" # "spaces"
+status_indicators = "dots" # "symbols"

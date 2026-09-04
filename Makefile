@@ -1,6 +1,7 @@
 all: pacman paru rustup bash dirs \
 	hypr sway swaylock rofi waybar \
-	nvim tmux git_config starship ghostty alacritty \
+	nvim tmux git_config starship \
+	ghostty alacritty herdr \
 	ufw ssh_config pacman_config
 
 PHONY: pacman
@@ -100,6 +101,15 @@ alacritty:
 		rm -rf $(HOME)/.config/alacritty; \
 	fi;
 	ln -sf $(HOME)/.dotfiles/.config/alacritty $(HOME)/.config/alacritty
+
+.PHONY: herdr
+herdr:
+	mkdir -p ~/.config/herdr
+	if [ -f ~/.config/herdr/config.toml ] || [ -h ~/.config/herdr/config.toml ]; then \
+		rm ~/.config/herdr/config.toml; \
+	fi
+	ln -sf $(HOME)/.dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
+
 
 .PHONY: ufw
 ufw:
