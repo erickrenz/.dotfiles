@@ -1,0 +1,8 @@
+[Unit]
+Description=Suspend if still unplugged with the lid closed
+
+[Service]
+Type=oneshot
+# logind only acts on the lid event itself, so unplugging an already-closed
+# laptop would leave it running in a bag. The delay rides out power flickers.
+ExecStart=/usr/bin/sh -c 'sleep 60; grep -q 0 /sys/class/power_supply/AC/online && grep -q closed /proc/acpi/button/lid/LID/state && systemctl suspend || true'

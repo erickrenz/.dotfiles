@@ -1,0 +1,12 @@
+[Unit]
+Description=Cap battery charge at 80%
+ConditionPathExists=/sys/class/power_supply/BAT0/charge_control_end_threshold
+After=multi-user.target
+
+[Service]
+Type=oneshot
+# start must stay below end, so end is written twice to work from any prior state
+ExecStart=/usr/bin/sh -c 'cd /sys/class/power_supply/BAT0 && { echo 80 > charge_control_end_threshold || true; } && echo 75 > charge_control_start_threshold && echo 80 > charge_control_end_threshold'
+
+[Install]
+WantedBy=multi-user.target
