@@ -1,7 +1,7 @@
 all: pacman paru rustup bash dirs \
 	hypr sway swaylock rofi waybar \
 	nvim tmux git_config starship \
-	ghostty alacritty herdr \
+	ghostty alacritty herdr claude \
 	ufw ssh_config pacman_config
 
 PHONY: pacman
@@ -110,6 +110,11 @@ herdr:
 	fi
 	ln -sf $(HOME)/.dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
 
+.PHONY: claude
+claude:
+	mkdir -p $(HOME)/.claude
+	ln -sf $(HOME)/.dotfiles/.config/claude/settings.json $(HOME)/.claude/settings.json
+	ln -sf $(HOME)/.dotfiles/.config/claude/statusline.sh $(HOME)/.claude/statusline.sh
 
 .PHONY: ufw
 ufw:
