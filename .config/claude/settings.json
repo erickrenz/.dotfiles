@@ -19,5 +19,6 @@
   },
   "autoMemoryEnabled": false,
   "theme": "dark",
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "editorMode": "vim"
 }
