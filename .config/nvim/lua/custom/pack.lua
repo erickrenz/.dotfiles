@@ -1,11 +1,40 @@
+vim.api.nvim_create_autocmd('PackChanged', {
+  group = vim.api.nvim_create_augroup('my-vim-pack', { clear = true }),
+  callback = function(ev)
+    if ev.data.spec.name == 'nvim-treesitter' and ev.data.kind == 'update' then
+      vim.notify(
+        'nvim-treesitter updated; restart Neovim, then run :TSUpdate',
+        vim.log.levels.WARN
+      )
+      return
+    end
+
+    vim.notify(
+      ('vim.pack: %s %s'):format(ev.data.kind, ev.data.spec.name),
+      vim.log.levels.INFO
+    )
+  end,
+})
+
 vim.pack.add({
   'https://github.com/folke/tokyonight.nvim',
   'https://github.com/nvim-lualine/lualine.nvim',
   'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/nvim-telescope/telescope.nvim',
   'https://github.com/tpope/vim-fugitive',
   'https://github.com/lewis6991/gitsigns.nvim',
 }, { load = true, confirm = false })
+
+vim.api.nvim_create_user_command('PackUpdate', function(opts)
+  local ok, err = pcall(vim.pack.update, nil, { force = opts.bang })
+  if not ok then
+    vim.notify(('vim.pack update failed:\n%s'):format(err), vim.log.levels.ERROR)
+  end
+end, {
+  bang = true,
+  desc = 'Check plugin updates (! applies all updates)',
+})
 
 require('tokyonight').setup {
   style = 'night',

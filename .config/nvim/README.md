@@ -10,11 +10,13 @@ Plugins are managed by Neovim's built-in `vim.pack` in `lua/custom/pack.lua`.
 
 - `nvim-telescope/telescope.nvim`: fuzzy file, grep, help, and diagnostic pickers.
 - `nvim-lua/plenary.nvim`: Telescope dependency.
+- `nvim-treesitter/nvim-treesitter`: manages Tree-sitter parsers and queries.
 - `tpope/vim-fugitive`: Git porcelain inside Neovim.
 - `lewis6991/gitsigns.nvim`: inline Git hunk signs.
 
-Use `:packupdate` to update installed plugins. Use `:packdel {name}` to delete a
-plugin managed by `vim.pack`.
+Use `:PackUpdate` to inspect available plugin updates; select updates in its
+report buffer. Use `:PackUpdate!` to apply every available update immediately.
+`vim.pack` reports install and update events in Neovim notifications.
 
 ## Removed Plugin Replacements
 
@@ -83,26 +85,19 @@ location/quickfix lists.
 
 ### Tree-sitter
 
-nvim-treesitter was removed. Neovim's native Tree-sitter integration starts
-highlighting for configured filetypes when a parser is available.
+Neovim's native Tree-sitter engine performs highlighting and parsing. The
+eagerly loaded `nvim-treesitter` dependency manages version-compatible parsers
+and query files; it does not replace Neovim's highlighter. Rust is installed
+automatically. Install additional languages as needed:
 
-Neovim bundles parsers for C, Lua, Markdown, Vimscript, Vimdoc, and Tree-sitter
-query files. Install extra parsers with Arch packages when available:
-
-```sh
-sudo pacman -S tree-sitter tree-sitter-cli
-sudo pacman -S tree-sitter-javascript tree-sitter-python tree-sitter-rust
+```vim
+:TSInstall javascript python cpp go typescript tsx zig
 ```
 
-As of July 2026, Arch's official `tree-sitter-grammars` group does not include
-C++, Go, TypeScript/TSX, or Zig parsers. Install those from the AUR or build
-them manually if you want native Tree-sitter highlighting for those languages:
-
-```sh
-yay -S tree-sitter-cpp-git tree-sitter-zig
-```
-
-Missing parsers are ignored at startup, so editing still works without them.
+The installer requires `tree-sitter-cli`, `curl`, `tar`, and a C compiler. Run
+`:TSUpdate` after updating `nvim-treesitter` (the `vim.pack` notification
+reminds you). The config reports missing parsers or highlight queries once per
+language; run `:TreesitterStatus` in a buffer to inspect its current status.
 
 ### Formatting and Conform
 

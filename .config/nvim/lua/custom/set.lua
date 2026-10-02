@@ -30,6 +30,8 @@ vim.o.colorcolumn = '80'
 vim.o.signcolumn = 'yes'
 vim.o.inccommand = 'split'
 
+vim.o.completeopt = 'menuone,noinsert,popup'
+
 vim.o.mouse = 'a'
 vim.o.confirm = true
 vim.o.showmode = false
