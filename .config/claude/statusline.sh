@@ -19,7 +19,7 @@ out="\033[34m${dir/#$HOME/\~}\033[0m"
 branch=$(git -C "$dir" branch --show-current 2>/dev/null)
 [ -n "$branch" ] && out+="$sep\033[35m$branch\033[0m"
 
-[ -n "$model" ] && out+="$sep$model"
+[ -n "$model" ] && out+="$sep\033[38;5;208m$model\033[0m"
 [ -n "$ctx" ] && out+="$sep${ctx}K"
 
 printf '%b\n' "$out"
