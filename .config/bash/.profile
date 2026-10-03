@@ -19,6 +19,20 @@ alias ls="ls --color=auto"
 alias fast="fastfetch"
 alias up="sudo pacman -Syu"
 
+# claude remote-control: give each session started from the app its own git
+# worktree. There is no settings.json key for this, only the --spawn flag.
+# Left alone outside a git repo (worktree mode errors there) and when the
+# invocation picks its own mode or reattaches to an existing session.
+claude() {
+  if [ "$1" = "remote-control" ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    case " $* " in
+      *" --spawn"*|*" --session-id"*|*" --continue "*|*" -c "*|*" --help "*|*" -h "*) ;;
+      *) shift; set -- remote-control --spawn=worktree "$@" ;;
+    esac
+  fi
+  command claude "$@"
+}
+
 # fzf colors
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
 --color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64 \
