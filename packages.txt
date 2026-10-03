@@ -9,6 +9,8 @@ chromium
 waybar
 tmux
 ttf-jetbrains-mono-nerd
+noto-fonts
+noto-fonts-emoji
 fastfetch
 git
 unzip

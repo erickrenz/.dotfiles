@@ -2,7 +2,7 @@ all: pacman paru rustup bash dirs \
 	hypr sway swaylock rofi waybar \
 	nvim tmux git_config starship \
 	ghostty alacritty herdr claude \
-	ufw ssh_config pacman_config
+	fontconfig ufw ssh_config pacman_config
 
 PHONY: pacman
 pacman:
@@ -101,6 +101,14 @@ alacritty:
 		rm -rf $(HOME)/.config/alacritty; \
 	fi;
 	ln -sf $(HOME)/.dotfiles/.config/alacritty $(HOME)/.config/alacritty
+
+.PHONY: fontconfig
+fontconfig:
+	if [ -d $(HOME)/.config/fontconfig ];  then \
+		rm -rf $(HOME)/.config/fontconfig; \
+	fi;
+	ln -sf $(HOME)/.dotfiles/.config/fontconfig $(HOME)/.config/fontconfig
+	fc-cache -f
 
 .PHONY: herdr
 herdr:
