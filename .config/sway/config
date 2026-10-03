@@ -39,14 +39,14 @@ exec swayidle -w \
     before-sleep 'swaylock -f -c 000000'
 
 # On AC the lid no longer suspends (see etc/logind-lid.conf), so lock and blank here
-bindswitch --locked lid:on exec swaylock -f -c 000000
-bindswitch --locked --reload lid:on output eDP-1 power off
+bindswitch --locked --reload lid:on exec swaylock -f -c 000000; output eDP-1 power off
 bindswitch --locked --reload lid:off output eDP-1 power on
 
 bindsym $mod+Return exec $term
 bindsym $mod+Escape exec swaylock -f
 bindsym $mod+a exec chromium --app=https://chatgpt.com --enable-features=UseOzonePlatform --ozone-platform=wayland
 bindsym $mod+m exec chromium --app=https://gmail.com --enable-features=UseOzonePlatform --ozone-platform=wayland
+bindsym $mod+t exec t3code
 bindsym $mod+d exec $menu
 bindsym $mod+r mode "resize"
 bindsym $mod+q kill
