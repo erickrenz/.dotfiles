@@ -19,6 +19,11 @@
   },
   "autoMemoryEnabled": false,
   "theme": "dark",
+  "editorMode": "vim",
   "agentPushNotifEnabled": true,
-  "editorMode": "vim"
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  }
 }
