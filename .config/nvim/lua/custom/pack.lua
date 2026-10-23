@@ -1,104 +1,84 @@
+-- Build steps that lazy.nvim used to run via `build`. Must be registered
+-- before any vim.pack.add() so they fire on first install.
 vim.api.nvim_create_autocmd('PackChanged', {
   group = vim.api.nvim_create_augroup('my-vim-pack', { clear = true }),
   callback = function(ev)
-    if ev.data.spec.name == 'nvim-treesitter' and ev.data.kind == 'update' then
-      vim.notify(
-        'nvim-treesitter updated; restart Neovim, then run :TSUpdate',
-        vim.log.levels.WARN
-      )
+    local name, kind = ev.data.spec.name, ev.data.kind
+    if kind == 'delete' then
       return
     end
 
-    vim.notify(
-      ('vim.pack: %s %s'):format(ev.data.kind, ev.data.spec.name),
-      vim.log.levels.INFO
-    )
+    if name == 'telescope-fzf-native.nvim' then
+      local result = vim.system({ 'make' }, { cwd = ev.data.path }):wait()
+      if result.code ~= 0 then
+        vim.notify('telescope-fzf-native: make failed\n' .. result.stderr, vim.log.levels.ERROR)
+      end
+    elseif name == 'nvim-treesitter' and kind == 'update' then
+      if not ev.data.active then
+        vim.cmd.packadd 'nvim-treesitter'
+      end
+      vim.cmd 'TSUpdate'
+    end
   end,
 })
 
-vim.pack.add({
-  'https://github.com/folke/tokyonight.nvim',
-  'https://github.com/nvim-lualine/lualine.nvim',
-  'https://github.com/nvim-lua/plenary.nvim',
-  'https://github.com/nvim-treesitter/nvim-treesitter',
-  'https://github.com/nvim-telescope/telescope.nvim',
-  'https://github.com/tpope/vim-fugitive',
-  'https://github.com/lewis6991/gitsigns.nvim',
-}, { load = true, confirm = false })
+local gh = function(repo)
+  return 'https://github.com/' .. repo
+end
+
+vim.pack.add {
+  gh 'folke/tokyonight.nvim',
+  gh 'nvim-lua/plenary.nvim',
+  gh 'nvim-tree/nvim-web-devicons',
+
+  -- plugins/init.lua
+  gh 'NMAC427/guess-indent.nvim',
+  gh 'lukas-reineke/indent-blankline.nvim',
+  gh 'lewis6991/gitsigns.nvim',
+  gh 'folke/todo-comments.nvim',
+
+  -- nvim-lspconfig only supplies lsp/<server>.lua defaults for vim.lsp.config
+  gh 'neovim/nvim-lspconfig',
+  gh 'mason-org/mason.nvim',
+  gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
+  gh 'j-hui/fidget.nvim',
+  gh 'folke/lazydev.nvim',
+
+  gh 'hrsh7th/nvim-cmp',
+  gh 'hrsh7th/cmp-nvim-lsp',
+  gh 'hrsh7th/cmp-path',
+  gh 'hrsh7th/cmp-buffer',
+
+  gh 'stevearc/conform.nvim',
+  gh 'tpope/vim-fugitive',
+  { src = gh 'ThePrimeagen/harpoon', version = 'harpoon2' },
+  gh 'nvim-lualine/lualine.nvim',
+
+  { src = gh 'nvim-telescope/telescope.nvim', version = vim.version.range '0.2' },
+  gh 'nvim-telescope/telescope-ui-select.nvim',
+  gh 'nvim-telescope/telescope-fzf-native.nvim',
+
+  gh 'nvim-treesitter/nvim-treesitter',
+  gh 'folke/trouble.nvim',
+  gh 'mbbill/undotree',
+}
 
 vim.api.nvim_create_user_command('PackUpdate', function(opts)
-  local ok, err = pcall(vim.pack.update, nil, { force = opts.bang })
-  if not ok then
-    vim.notify(('vim.pack update failed:\n%s'):format(err), vim.log.levels.ERROR)
-  end
+  vim.pack.update(nil, { force = opts.bang })
 end, {
   bang = true,
   desc = 'Check plugin updates (! applies all updates)',
 })
 
-require('tokyonight').setup {
-  style = 'night',
-  on_colors = function() end,
-  on_highlights = function() end,
-}
-vim.cmd.colorscheme 'tokyonight'
-
-require('lualine').setup {
-  options = {
-    icons_enabled = true,
-    theme = 'tokyonight',
-    component_separators = '|',
-    section_separators = '',
-  },
-}
-
-require('gitsigns').setup()
-
-require('telescope').setup {
-  defaults = {
-    layout_strategy = 'flex',
-    layout_config = {
-      flex = {
-        flip_columns = 120,
-      },
-    },
-  },
-}
-
-local builtin = require 'telescope.builtin'
-
-vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = 'Telescope git files' })
-vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Telescope files' })
-vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'Telescope diagnostics' })
-vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help' })
-vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'Telescope word' })
-vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Telescope grep' })
-vim.keymap.set('n', '<leader>/', function()
-  builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
-end, { desc = 'Telescope buffer' })
-
-vim.keymap.set('n', '<leader>gs', vim.cmd.Git, { desc = 'Fugitive status' })
-
-vim.api.nvim_create_autocmd('BufWinEnter', {
-  group = vim.api.nvim_create_augroup('my_fugitive', {}),
-  pattern = '*',
-  callback = function()
-    if vim.bo.ft ~= 'fugitive' then
-      return
-    end
-
-    local bufnr = vim.api.nvim_get_current_buf()
-    local opts = { buffer = bufnr, remap = false }
-
-    vim.keymap.set('n', '<leader>p', function()
-      vim.cmd.Git 'push'
-    end, opts)
-
-    vim.keymap.set('n', '<leader>P', function()
-      vim.cmd.Git 'pull --rebase'
-    end, opts)
-  end,
-})
+require 'custom.plugins.colors'
+require 'custom.plugins'
+require 'custom.plugins.lsp'
+require 'custom.plugins.cmp'
+require 'custom.plugins.conform'
+require 'custom.plugins.fugitive'
+require 'custom.plugins.harpoon'
+require 'custom.plugins.lualine'
+require 'custom.plugins.telescope'
+require 'custom.plugins.treesitter'
+require 'custom.plugins.trouble'
+require 'custom.plugins.undotree'

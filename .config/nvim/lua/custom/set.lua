@@ -6,7 +6,7 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 vim.schedule(function()
-    vim.o.clipboard = 'unnamedplus'
+  vim.o.clipboard = 'unnamedplus'
 end)
 
 vim.o.hlsearch = false
@@ -29,8 +29,6 @@ vim.o.scrolloff = 8
 vim.o.colorcolumn = '80'
 vim.o.signcolumn = 'yes'
 vim.o.inccommand = 'split'
-
-vim.o.completeopt = 'menuone,noinsert,popup'
 
 vim.o.mouse = 'a'
 vim.o.confirm = true

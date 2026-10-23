@@ -1,7 +1,5 @@
 require 'custom.set'
-vim.cmd.packadd 'nvim.undotree'
 require 'custom.pack'
 require 'custom.remap'
 require 'custom.autocmd'
 require 'custom.lsp'
-require 'custom.treesitter'

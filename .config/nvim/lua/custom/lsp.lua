@@ -1,119 +1,115 @@
 vim.diagnostic.config {
-    float = {
-        focusable = false,
-        source = true,
-        style = 'minimal',
-        border = 'rounded',
-        header = '',
-        prefix = '',
-    },
-    virtual_text = true,
+  virtual_text = true,
+  float = {
+    focusable = false,
+    source = true,
+    style = 'minimal',
+    border = 'rounded',
+    header = '', -- "Diagnostics:"
+    prefix = '', -- "1. "
+  },
 }
 
 vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('my-lsp', { clear = true }),
-    callback = function(ev)
-        local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+  group = vim.api.nvim_create_augroup('my-lsp-attach', { clear = true }),
+  callback = function(event)
+    local opts = { buffer = event.buf }
+    local client = assert(vim.lsp.get_client_by_id(event.data.client_id), 'must have valid client')
 
-        if client:supports_method('textDocument/completion') then
-            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-        end
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
 
-        if client:supports_method('textDocument/inlayHint') then
-            vim.keymap.set('n', '<leader>th', function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = ev.buf }, { bufnr = ev.buf })
-            end, { buffer = ev.buf, desc = 'Toggle inlay hints' })
-        end
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<leader>k', vim.lsp.buf.signature_help, opts)
 
-        if not client:supports_method('textDocument/willSaveWaitUntil')
-            and client:supports_method('textDocument/formatting') then
-            vim.api.nvim_create_autocmd('BufWritePre', {
-                group = vim.api.nvim_create_augroup('my-lsp-format', { clear = false }),
-                buffer = ev.buf,
-                callback = function()
-                    vim.lsp.buf.format { bufnr = ev.buf, id = client.id, timeout_ms = 1000 }
-                end,
-            })
-        end
-    end,
+    -- return from definition using CTRL-O (see :h CTRL-O)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+
+    vim.keymap.set('n', '[d', function()
+      vim.diagnostic.jump { count = -1, float = true }
+    end, opts)
+    vim.keymap.set('n', ']d', function()
+      vim.diagnostic.jump { count = 1, float = true }
+    end, opts)
+
+    if client:supports_method('textDocument/inlayHint', event.buf) then
+      vim.keymap.set('n', '<leader>th', function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }, { bufnr = event.buf })
+      end, opts)
+    end
+
+    if client:supports_method('textDocument/documentHighlight', event.buf) then
+      local highlight_augroup = vim.api.nvim_create_augroup('my-lsp-highlight', { clear = false })
+      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.document_highlight,
+      })
+
+      vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.clear_references,
+      })
+
+      vim.api.nvim_create_autocmd('LspDetach', {
+        group = vim.api.nvim_create_augroup('my-lsp-detach', { clear = true }),
+        callback = function(event2)
+          vim.lsp.buf.clear_references()
+          vim.api.nvim_clear_autocmds { group = 'my-lsp-highlight', buffer = event2.buf }
+        end,
+      })
+    end
+  end,
 })
 
-vim.api.nvim_create_user_command('Format', function()
-    vim.lsp.buf.format { timeout_ms = 1000 }
-end, { desc = 'Format buffer with attached LSP' })
-
+-- Server defaults (cmd, filetypes, root markers) come from nvim-lspconfig's
+-- lsp/<name>.lua; these tables only hold overrides.
 local servers = {
-    clangd = {
-        cmd = { 'clangd' },
-        filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
-        root_markers = { '.clangd', 'compile_commands.json', 'compile_flags.txt', '.git' },
-    },
-    gopls = {
-        cmd = { 'gopls' },
-        filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
-        root_markers = { 'go.work', 'go.mod', '.git' },
-        settings = {
-            gopls = {
-                usePlaceholders = true,
-                analyses = {
-                    shadow = true,
-                    unusedvariable = true,
-                    useany = true,
-                },
-                hints = {
-                    assignVariableTypes = true,
-                    compositeLiteralFields = true,
-                    compositeLiteralTypes = true,
-                    constantValues = true,
-                    functionTypeParameters = true,
-                    parameterNames = true,
-                    rangeVariableTypes = true,
-                },
-            },
+  clangd = {},
+  gopls = {
+    settings = {
+      -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md
+      gopls = {
+        -- completeUnimported = true,
+        usePlaceholders = true,
+        analyses = {
+          -- fieldalignment = true,
+          shadow = true,
+          unusedvariable = true,
+          useany = true,
         },
-    },
-    lua_ls = {
-        cmd = { 'lua-language-server' },
-        filetypes = { 'lua' },
-        root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
-        settings = {
-            Lua = {
-                runtime = { version = 'LuaJIT' },
-                workspace = { library = vim.api.nvim_get_runtime_file('', true) },
-            },
+        hints = {
+          assignVariableTypes = true,
+          compositeLiteralFields = true,
+          compositeLiteralTypes = true,
+          constantValues = true,
+          functionTypeParameters = true,
+          parameterNames = true,
+          rangeVariableTypes = true,
         },
+      },
     },
-    pyright = {
-        cmd = { 'pyright-langserver', '--stdio' },
-        filetypes = { 'python' },
-        root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
+  },
+  -- ltex = {},
+  lua_ls = {},
+  pyright = {},
+  rust_analyzer = {},
+  ts_ls = {},
+  zls = {
+    settings = {
+      zls = {
+        enable_inlay_hints = true,
+        enable_snippets = true,
+        warn_style = true,
+      },
     },
-    rust_analyzer = {
-        cmd = { 'rust-analyzer' },
-        filetypes = { 'rust' },
-        root_markers = { 'Cargo.toml', 'rust-project.json', '.git' },
-    },
-    ts_ls = {
-        cmd = { 'typescript-language-server', '--stdio' },
-        filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
-        root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
-    },
-    zls = {
-        cmd = { 'zls' },
-        filetypes = { 'zig', 'zir' },
-        root_markers = { 'build.zig', '.git' },
-        settings = {
-            zls = {
-                enable_inlay_hints = true,
-                enable_snippets = true,
-                warn_style = true,
-            },
-        },
-    },
+  },
 }
 
 for name, config in pairs(servers) do
-    vim.lsp.config(name, config)
+  vim.lsp.config(name, config)
 end
-
 vim.lsp.enable(vim.tbl_keys(servers))
