@@ -3,16 +3,21 @@
 # with the lid closed, reachable over Tailscale. Safe to re-run.
 set -euo pipefail
 
-DOTFILES="$HOME/.dotfiles"
+DOTFILES="${DOTFILES:-$(cd "$(dirname "$0")/.." && pwd)}"
+
+# Copied, never linked: a root-owned link into $HOME lets anything running as
+# this user rewrite what root executes. Re-run after editing the sources.
+install_root() {
+	sudo install -Dm644 -o root -g root "$DOTFILES/$1" "$2"
+}
 
 echo "==> Battery: charge to 80%, resume charging below 75%"
-sudo ln -sf "$DOTFILES/etc/battery-charge-threshold.service" /etc/systemd/system/battery-charge-threshold.service
+install_root etc/battery-charge-threshold.service /etc/systemd/system/battery-charge-threshold.service
 
 echo "==> Lid: ignore on AC, suspend on battery"
-sudo mkdir -p /etc/systemd/logind.conf.d
-sudo ln -sf "$DOTFILES/etc/logind-lid.conf" /etc/systemd/logind.conf.d/10-lid.conf
-sudo ln -sf "$DOTFILES/etc/lid-closed-on-battery.service" /etc/systemd/system/lid-closed-on-battery.service
-sudo ln -sf "$DOTFILES/etc/ac-unplug.rules" /etc/udev/rules.d/90-ac-unplug.rules
+install_root etc/logind-lid.conf /etc/systemd/logind.conf.d/10-lid.conf
+install_root etc/lid-closed-on-battery.service /etc/systemd/system/lid-closed-on-battery.service
+install_root etc/ac-unplug.rules /etc/udev/rules.d/90-ac-unplug.rules
 
 sudo systemctl daemon-reload
 sudo systemctl enable battery-charge-threshold.service
@@ -32,9 +37,7 @@ echo "==> Firewall: ssh only over the tailnet"
 sudo ufw delete allow ssh || true
 sudo ufw delete limit ssh || true
 sudo ufw delete limit 22 || true
-sudo ufw allow in on tailscale0 to any port 22 proto tcp
-sudo ufw allow 41641/udp
-sudo ufw reload
+make -C "$DOTFILES" ufw
 
 echo "==> SSH"
 mkdir -p "$HOME/.ssh"

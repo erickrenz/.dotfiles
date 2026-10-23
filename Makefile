@@ -1,133 +1,121 @@
+DOTFILES ?= $(CURDIR)
+
+# $(call link,path-in-repo,destination): symlink a user config into place.
+# A real file or directory already there is moved aside, not deleted.
+define link
+	@mkdir -p $(dir $(2))
+	@if [ -e $(2) ] && [ ! -L $(2) ]; then \
+		mv $(2) $(2).bak.$$(date +%s) && echo "backed up $(2)"; \
+	fi
+	ln -sfn $(DOTFILES)/$(1) $(2)
+endef
+
+# $(call install_root,path-in-repo,destination): copy a system file into place.
+# Copied, never linked: a root-owned link into $HOME lets anything running as
+# this user rewrite root's config. Re-run the target after editing the source.
+define install_root
+	sudo install -Dm644 -o root -g root $(DOTFILES)/$(1) $(2)
+endef
+
+.PHONY: all
 all: pacman makepkg_config rustup paru bash dirs \
-	hypr sway swaylock rofi waybar \
+	sway swaylock rofi waybar \
 	nvim tmux git_config starship \
 	ghostty alacritty herdr claude \
-	fontconfig ufw ssh_config pacman_config
+	fontconfig ufw ssh_config
+
+.PHONY: pacman_config
+pacman_config:
+	$(call install_root,etc/pacman.conf,/etc/pacman.conf)
 
 .PHONY: pacman
-pacman:
+pacman: pacman_config
 	sudo pacman -Syu --needed - < packages.txt
 
 .PHONY: makepkg_config
 makepkg_config:
-	mkdir -p $(HOME)/.config/pacman
-	ln -sf $(HOME)/.dotfiles/.config/pacman/makepkg.conf $(HOME)/.config/pacman/makepkg.conf
+	$(call link,.config/pacman/makepkg.conf,$(HOME)/.config/pacman/makepkg.conf)
 
+# paru updates itself through `paru -Syu`, so only bootstrap it when missing
 .PHONY: paru
-paru:
-	@if [ -d "$(HOME)/paru" ]; then \
-		cd $(HOME)/paru && git pull --rebase ; \
-	else \
-		git clone https://aur.archlinux.org/paru.git $(HOME)/paru/ ; \
-	fi
-	cd $(HOME)/paru && makepkg -si
+paru: pacman rustup makepkg_config
+	@command -v paru >/dev/null || { \
+		tmp=$$(mktemp -d) && \
+		git clone https://aur.archlinux.org/paru.git $$tmp/paru && \
+		(cd $$tmp/paru && makepkg -si); \
+		status=$$?; rm -rf $$tmp; exit $$status; \
+	}
 	paru -S --needed - < packages-aur.txt
 
 .PHONY: rustup
-rustup:
+rustup: pacman
 	rustup default stable
 
 .PHONY: bash
 bash:
-	ln -sf $(HOME)/.dotfiles/.config/bash/.bash_profile $(HOME)/.bash_profile
-	ln -sf $(HOME)/.dotfiles/.config/bash/.bashrc $(HOME)/.bashrc
-	ln -sf $(HOME)/.dotfiles/.config/bash/.profile $(HOME)/.profile
-	ln -sf $(HOME)/.dotfiles/.config/bash/.zshrc $(HOME)/.zshrc
+	$(call link,.config/bash/.bash_profile,$(HOME)/.bash_profile)
+	$(call link,.config/bash/.bashrc,$(HOME)/.bashrc)
+	$(call link,.config/bash/.profile,$(HOME)/.profile)
+	$(call link,.config/bash/.zshrc,$(HOME)/.zshrc)
 
 .PHONY: dirs
 dirs:
 	mkdir -p $(HOME)/.config
 	mkdir -p $(HOME)/code
 
-.PHONY: hypr
-hypr:
-	if [ -d $(HOME)/.config/hypr ];  then \
-		rm -rf $(HOME)/.config/hypr; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/hypr $(HOME)/.config/hypr
-
 .PHONY: swaylock
 swaylock:
-	if [ -d $(HOME)/.config/swaylock ];  then \
-		rm -rf $(HOME)/.config/swaylock; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/swaylock $(HOME)/.config/swaylock
+	$(call link,.config/swaylock,$(HOME)/.config/swaylock)
 
 .PHONY: sway
 sway:
-	if [ -d $(HOME)/.config/sway ];  then \
-		rm -rf $(HOME)/.config/sway; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/sway $(HOME)/.config/sway
+	$(call link,.config/sway,$(HOME)/.config/sway)
 
 .PHONY: rofi
 rofi:
-	if [ -d $(HOME)/.config/rofi ];  then \
-		rm -rf $(HOME)/.config/rofi; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/rofi $(HOME)/.config/rofi
+	$(call link,.config/rofi,$(HOME)/.config/rofi)
 
 .PHONY: waybar
 waybar:
-	if [ -d $(HOME)/.config/waybar ];  then \
-		rm -rf $(HOME)/.config/waybar; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/waybar $(HOME)/.config/waybar
+	$(call link,.config/waybar,$(HOME)/.config/waybar)
 
 .PHONY: nvim
 nvim:
-	if [ -d $(HOME)/.config/nvim ];  then \
-		rm -rf $(HOME)/.config/nvim; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/nvim $(HOME)/.config/nvim 
+	$(call link,.config/nvim,$(HOME)/.config/nvim)
 
 .PHONY: tmux
 tmux:
-	ln -sf $(HOME)/.dotfiles/.config/.tmux.conf $(HOME)/.tmux.conf
+	$(call link,.config/.tmux.conf,$(HOME)/.tmux.conf)
 
 .PHONY: git_config
 git_config:
-	ln -sf $(HOME)/.dotfiles/.config/.gitconfig $(HOME)/.gitconfig
+	$(call link,.config/.gitconfig,$(HOME)/.gitconfig)
 
 .PHONY: starship
 starship:
-	ln -sf $(HOME)/.dotfiles/.config/starship.toml $(HOME)/.config/starship.toml
+	$(call link,.config/starship.toml,$(HOME)/.config/starship.toml)
 
 .PHONY: ghostty
 ghostty:
-	if [ -d $(HOME)/.config/ghostty ];  then \
-		rm -rf $(HOME)/.config/ghostty; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/ghostty $(HOME)/.config/ghostty
+	$(call link,.config/ghostty,$(HOME)/.config/ghostty)
 
 .PHONY: alacritty
 alacritty:
-	if [ -d $(HOME)/.config/alacritty ];  then \
-		rm -rf $(HOME)/.config/alacritty; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/alacritty $(HOME)/.config/alacritty
+	$(call link,.config/alacritty,$(HOME)/.config/alacritty)
 
 .PHONY: fontconfig
 fontconfig:
-	if [ -d $(HOME)/.config/fontconfig ];  then \
-		rm -rf $(HOME)/.config/fontconfig; \
-	fi;
-	ln -sf $(HOME)/.dotfiles/.config/fontconfig $(HOME)/.config/fontconfig
+	$(call link,.config/fontconfig,$(HOME)/.config/fontconfig)
 	fc-cache -f
 
 .PHONY: herdr
 herdr:
-	mkdir -p ~/.config/herdr
-	if [ -f ~/.config/herdr/config.toml ] || [ -h ~/.config/herdr/config.toml ]; then \
-		rm ~/.config/herdr/config.toml; \
-	fi
-	ln -sf $(HOME)/.dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
+	$(call link,.config/herdr/config.toml,$(HOME)/.config/herdr/config.toml)
 
 .PHONY: claude
 claude:
-	mkdir -p $(HOME)/.claude
-	ln -sf $(HOME)/.dotfiles/.config/claude/settings.json $(HOME)/.claude/settings.json
-	ln -sf $(HOME)/.dotfiles/.config/claude/statusline.sh $(HOME)/.claude/statusline.sh
+	$(call link,.config/claude/settings.json,$(HOME)/.claude/settings.json)
+	$(call link,.config/claude/statusline.sh,$(HOME)/.claude/statusline.sh)
 
 .PHONY: ufw
 ufw:
@@ -139,17 +127,16 @@ ufw:
 	sudo ufw --force enable
 	sudo ufw status verbose
 
+# The 10- prefix sorts before Arch's 99-archlinux.conf; sshd keeps the first
+# value it reads for each option.
 .PHONY: ssh_config
 ssh_config:
+	sudo rm -f /etc/ssh/sshd_config.d/disable-passwords.conf
+	$(call install_root,etc/ssh.conf,/etc/ssh/sshd_config.d/10-disable-passwords.conf)
+	sudo sshd -t
 	sudo systemctl enable sshd
-	sudo ln -sf $(HOME)/.dotfiles/etc/ssh.conf /etc/ssh/sshd_config.d/disable-passwords.conf
-	sudo sshd -t 
 	sudo systemctl restart sshd
 
 .PHONY: server
 server:
-	./scripts/setup-server.sh
-
-.PHONY: pacman_config
-pacman_config:
-	sudo ln -sf $(HOME)/.dotfiles/etc/pacman.conf /etc/pacman.conf
+	DOTFILES=$(DOTFILES) ./scripts/setup-server.sh
