@@ -34,14 +34,8 @@ jq
 parallel
 starship
 man-db
-hyprland
 dunst
-uwsm
-dolphin
-wofi
-xdg-desktop-portal-hyprland
 qt6-wayland
-polkit-kde-agent
 grim
 slurp
 wl-clipboard
@@ -49,6 +43,10 @@ sway
 swayidle
 swaylock
 swaybg
+xdg-desktop-portal-wlr
+polkit-gnome
+brightnessctl
+playerctl
 alacritty
 protobuf
 linux-firmware-qlogic

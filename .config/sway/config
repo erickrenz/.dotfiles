@@ -42,6 +42,25 @@ exec swayidle -w \
 bindswitch --locked --reload lid:on exec swaylock -f -c 000000; output eDP-1 power off
 bindswitch --locked --reload lid:off output eDP-1 power on
 
+# polkit agent, so GUI apps can ask for the password
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# Media and brightness keys (--locked so they work on the lock screen too)
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym --locked XF86MonBrightnessUp exec brightnessctl -e4 -n2 set 5%+
+bindsym --locked XF86MonBrightnessDown exec brightnessctl -e4 -n2 set 5%-
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioPause exec playerctl play-pause
+bindsym --locked XF86AudioPrev exec playerctl previous
+
+# Screenshots to the clipboard: Print for a region, Shift+Print for everything
+bindsym Print exec grim -g "$(slurp)" - | wl-copy --type image/png
+bindsym Shift+Print exec grim - | wl-copy --type image/png
+
 bindsym $mod+Return exec $term
 bindsym $mod+Escape exec swaylock -f
 bindsym $mod+a exec chromium --app=https://chatgpt.com --enable-features=UseOzonePlatform --ozone-platform=wayland
