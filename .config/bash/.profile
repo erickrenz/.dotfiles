@@ -17,7 +17,7 @@ alias nv="nvim ."
 alias l="ls -al --color=auto"
 alias ls="ls --color=auto"
 alias fast="fastfetch"
-alias up="sudo pacman -Syu"
+alias up="paru -Syu"
 
 # claude remote-control: give each session started from the app its own git
 # worktree. There is no settings.json key for this, only the --spawn flag.

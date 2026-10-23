@@ -1,29 +1,29 @@
-all: pacman makepkg_config paru rustup bash dirs \
+all: pacman makepkg_config rustup paru bash dirs \
 	hypr sway swaylock rofi waybar \
 	nvim tmux git_config starship \
 	ghostty alacritty herdr claude \
 	fontconfig ufw ssh_config pacman_config
 
-PHONY: pacman
+.PHONY: pacman
 pacman:
 	sudo pacman -Syu --needed - < packages.txt
 
-PHONY: makepkg_config
+.PHONY: makepkg_config
 makepkg_config:
 	mkdir -p $(HOME)/.config/pacman
 	ln -sf $(HOME)/.dotfiles/.config/pacman/makepkg.conf $(HOME)/.config/pacman/makepkg.conf
 
-PHONY: paru
+.PHONY: paru
 paru:
 	@if [ -d "$(HOME)/paru" ]; then \
 		cd $(HOME)/paru && git pull --rebase ; \
 	else \
-		git clone https://aur.archlinux.org/$(PKGNAME).git $(HOME)/paru/ ; \
+		git clone https://aur.archlinux.org/paru.git $(HOME)/paru/ ; \
 	fi
 	cd $(HOME)/paru && makepkg -si
 	paru -S --needed - < packages-aur.txt
 
-PHONY: rustup
+.PHONY: rustup
 rustup:
 	rustup default stable
 
