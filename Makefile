@@ -1,4 +1,4 @@
-all: pacman paru rustup bash dirs \
+all: pacman makepkg_config paru rustup bash dirs \
 	hypr sway swaylock rofi waybar \
 	nvim tmux git_config starship \
 	ghostty alacritty herdr claude \
@@ -7,6 +7,11 @@ all: pacman paru rustup bash dirs \
 PHONY: pacman
 pacman:
 	sudo pacman -Syu --needed - < packages.txt
+
+PHONY: makepkg_config
+makepkg_config:
+	mkdir -p $(HOME)/.config/pacman
+	ln -sf $(HOME)/.dotfiles/.config/pacman/makepkg.conf $(HOME)/.config/pacman/makepkg.conf
 
 PHONY: paru
 paru:
