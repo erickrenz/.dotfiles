@@ -1,5 +1,21 @@
 # .profile
 
+# Prepend to PATH unless already present, so nested shells don't grow it
+path_prepend() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$1:$PATH" ;;
+  esac
+}
+
+# Last one prepended comes first
+path_prepend "$HOME/.cargo/bin"
+path_prepend "$HOME/.grok/bin"
+path_prepend "$HOME/.dotfiles/bin"
+path_prepend "$HOME/bin"
+path_prepend "$HOME/.local/bin"
+export PATH
+
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
@@ -7,9 +23,9 @@ else
   export VISUAL='nvim'
 fi
 
-# Source global definitions
-if [ -f /home/ekrenz/.profile-tmp ]; then
-    . /home/ekrenz/.profile-tmp
+# Machine-local overrides, not tracked
+if [ -f "$HOME/.profile-tmp" ]; then
+    . "$HOME/.profile-tmp"
 fi
 
 alias nv="nvim ."
@@ -34,11 +50,8 @@ claude() {
 }
 
 # fzf colors
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
+export FZF_DEFAULT_OPTS="\
 --color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64 \
 --color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64 \
 --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff \
 --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
-
-# dotfiles bin
-export PATH="$HOME/.dotfiles/bin:$PATH"

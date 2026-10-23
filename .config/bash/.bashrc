@@ -1,23 +1,18 @@
 # .bashrc
 
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
-fi
+# Shared environment, aliases and functions
+source "$HOME/.profile"
 
-# User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
-    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-fi
-export PATH
+# Everything below is for interactive shells only; ssh commands, scp and
+# agent tool calls stop here.
+[[ $- != *i* ]] && return
 
 # History File
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=10000
-
-# Source shared aliases and functions
-source "$HOME/.profile"
+# append instead of overwriting, so parallel tmux panes don't clobber history
+shopt -s histappend
 
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --bash)"
@@ -25,16 +20,9 @@ eval "$(fzf --bash)"
 # tmux sessionizer
 bind -x '"\C-f":tmux-sessionizer'
 
-# rust
-export PATH="$HOME/.cargo/bin:$PATH"
-
 # starship
 eval "$(starship init bash)"
 
 # >>> grok installer >>>
-export PATH="$HOME/.grok/bin:$PATH"
 [[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
 # <<< grok installer <<<
-
-# Added by Antigravity CLI installer
-export PATH="/home/ekrenz/.local/bin:$PATH"
