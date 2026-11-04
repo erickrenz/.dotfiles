@@ -41,6 +41,7 @@ brew "oven-sh/bun/bun"
 
 # apps
 cask "ghostty"
+cask "t3-code"
 cask "iterm2"
 cask "google-chrome"
 cask "docker-desktop"
