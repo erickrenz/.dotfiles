@@ -1,11 +1,13 @@
 # .profile
 
-# Prepend to PATH unless already present, so nested shells don't grow it
+# Move a dir to the front of PATH, dropping any earlier copy, so nested shells
+# don't grow PATH and things prepended later (brew shellenv, macOS path_helper)
+# can't push it back.
 path_prepend() {
-  case ":$PATH:" in
-    *":$1:"*) ;;
-    *) PATH="$1:$PATH" ;;
-  esac
+  PATH=":$PATH:"
+  PATH="${PATH//:"$1":/:}"
+  PATH="${PATH#:}"
+  PATH="$1:${PATH%:}"
 }
 
 # Homebrew first, so the PATH entries below still win over it
