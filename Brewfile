@@ -10,6 +10,7 @@ brew "fastfetch"
 
 # editor
 brew "neovim"
+brew "tree-sitter-cli"
 brew "ripgrep"
 
 # tools

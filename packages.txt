@@ -5,6 +5,7 @@ go
 rustup
 ghostty
 neovim
+tree-sitter-cli
 chromium
 waybar
 tmux

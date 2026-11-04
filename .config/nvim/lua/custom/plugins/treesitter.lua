@@ -2,7 +2,23 @@
 -- highlighting is Neovim's builtin, started per buffer below.
 local ts = require 'nvim-treesitter'
 
-ts.install {
+-- Parsers are compiled with the tree-sitter CLI (Brewfile / packages.txt).
+-- Without it, warn once and only use parsers that are already installed.
+local can_install = vim.fn.executable 'tree-sitter' == 1
+if not can_install then
+  vim.notify(
+    'tree-sitter CLI not found; skipping parser installs (brew/pacman install tree-sitter-cli)',
+    vim.log.levels.WARN
+  )
+end
+
+local function install(langs)
+  if can_install then
+    return ts.install(langs)
+  end
+end
+
+install {
   'c',
   'cpp',
   'go',
@@ -37,7 +53,7 @@ vim.api.nvim_create_autocmd('FileType', {
     end
 
     -- equivalent of the old `auto_install = true`
-    if vim.list_contains(ts.get_available(), lang) then
+    if can_install and vim.list_contains(ts.get_available(), lang) then
       ts.install(lang):await(function(err)
         if not err then
           vim.schedule(function()
