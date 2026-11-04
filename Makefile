@@ -25,7 +25,8 @@ COMMON := bash dirs nvim tmux git_config starship \
 
 .PHONY: all
 ifeq ($(UNAME_S),Darwin)
-all: brew rustup $(COMMON)
+# Configs first, so a failing Brewfile entry does not leave them unlinked
+all: $(COMMON) brew rustup
 else
 all: pacman makepkg_config rustup paru $(COMMON) \
 	sway swaylock rofi waybar \
@@ -36,6 +37,7 @@ endif
 # shell, so brew's environment is loaded in the same line that uses it.
 .PHONY: brew
 brew:
+	@[ "$(UNAME_S)" = Darwin ] || { echo "brew: macOS only; Linux uses pacman/paru" >&2; exit 1; }
 	@command -v brew >/dev/null || [ -x /opt/homebrew/bin/brew ] || [ -x /usr/local/bin/brew ] || \
 		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	@eval "$$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)" && \
@@ -84,6 +86,8 @@ bash:
 	$(call link,.config/bash/.bashrc,$(HOME)/.bashrc)
 	$(call link,.config/bash/.profile,$(HOME)/.profile)
 	$(call link,.config/bash/.zshrc,$(HOME)/.zshrc)
+	$(call link,.config/bash/.zprofile,$(HOME)/.zprofile)
+	$(call link,.config/bash/.zshenv,$(HOME)/.zshenv)
 
 .PHONY: dirs
 dirs:
