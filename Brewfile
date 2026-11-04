@@ -28,7 +28,6 @@ brew "mise"
 # agents
 brew "opencode"
 cask "codex"
-cask "claude-code"
 
 # languages
 brew "llvm"
