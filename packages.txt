@@ -19,6 +19,7 @@ base-devel
 lld
 clang-tools-extra
 python
+uv
 nodejs
 npm
 lua
