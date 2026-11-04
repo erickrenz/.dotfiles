@@ -25,6 +25,11 @@ brew "protobuf"
 brew "awscli"
 brew "mise"
 
+# agents
+brew "opencode"
+cask "codex"
+cask "claude-code"
+
 # languages
 brew "llvm"
 brew "go"
@@ -37,6 +42,10 @@ brew "oven-sh/bun/bun"
 
 # apps
 cask "ghostty"
+cask "iterm2"
+cask "google-chrome"
+cask "docker-desktop"
+cask "tailscale-app"
 cask "zoom"
 
 # fonts
