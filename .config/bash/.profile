@@ -8,6 +8,17 @@ path_prepend() {
   esac
 }
 
+# Homebrew first, so the PATH entries below still win over it
+case "$OSTYPE" in
+  darwin*)
+    if [ -x /opt/homebrew/bin/brew ]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -x /usr/local/bin/brew ]; then
+      eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    ;;
+esac
+
 # Last one prepended comes first
 path_prepend "$HOME/.cargo/bin"
 path_prepend "$HOME/.grok/bin"
@@ -30,10 +41,20 @@ fi
 
 alias nv="nvim ."
 
-alias l="ls -al --color=auto"
-alias ls="ls --color=auto"
 alias fast="fastfetch"
-alias up="paru -Syu"
+
+case "$OSTYPE" in
+  darwin*)
+    alias l="ls -alG"
+    alias ls="ls -G"
+    alias up="brew update && brew upgrade"
+    ;;
+  *)
+    alias l="ls -al --color=auto"
+    alias ls="ls --color=auto"
+    alias up="paru -Syu"
+    ;;
+esac
 
 # claude remote-control: give each session started from the app its own git
 # worktree. There is no settings.json key for this, only the --spawn flag.
