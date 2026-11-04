@@ -17,12 +17,30 @@ define install_root
 	sudo install -Dm644 -o root -g root $(DOTFILES)/$(1) $(2)
 endef
 
+UNAME_S := $(shell uname -s)
+
+# Configs linked on every OS
+COMMON := bash dirs nvim tmux git_config starship \
+	ghostty alacritty herdr claude
+
 .PHONY: all
-all: pacman makepkg_config rustup paru bash dirs \
+ifeq ($(UNAME_S),Darwin)
+all: brew rustup $(COMMON)
+else
+all: pacman makepkg_config rustup paru $(COMMON) \
 	sway swaylock rofi waybar \
-	nvim tmux git_config starship \
-	ghostty alacritty herdr claude \
 	fontconfig ufw ssh_config
+endif
+
+# Homebrew is bootstrapped on first run. Each recipe line runs in its own
+# shell, so brew's environment is loaded in the same line that uses it.
+.PHONY: brew
+brew:
+	@command -v brew >/dev/null || [ -x /opt/homebrew/bin/brew ] || [ -x /usr/local/bin/brew ] || \
+		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	@eval "$$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)" && \
+		brew update && \
+		brew bundle --file=$(DOTFILES)/Brewfile
 
 .PHONY: pacman_config
 pacman_config:
@@ -47,9 +65,18 @@ paru: pacman rustup makepkg_config
 	}
 	paru -S --needed - < packages-aur.txt
 
+# macOS uses the upstream installer: Homebrew's rustup is keg-only and stays
+# off PATH. --no-modify-path because .profile already adds ~/.cargo/bin.
 .PHONY: rustup
+ifeq ($(UNAME_S),Darwin)
+rustup:
+	@command -v rustup >/dev/null || [ -x $(HOME)/.cargo/bin/rustup ] || \
+		curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+	PATH="$(HOME)/.cargo/bin:$$PATH" rustup default stable
+else
 rustup: pacman
 	rustup default stable
+endif
 
 .PHONY: bash
 bash:
