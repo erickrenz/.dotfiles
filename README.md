@@ -11,7 +11,9 @@ cd ~/.dotfiles && make
 - **Arch Linux**: installs `packages.txt` with pacman and `packages-aur.txt` with
   paru, then links the shared configs plus sway, waybar, rofi and the system files.
 - **macOS**: installs Homebrew if it is missing, installs the `Brewfile` with
-  `brew bundle`, installs rustup, then links the shared configs.
+  `brew bundle`, installs rustup, then links the shared configs. It also
+  installs a "TokyoNight Night" iTerm2 profile; make it the default in
+  iTerm2 > Settings > Profiles > Other Actions > Set as Default.
 
 You can also run a single target, such as `make nvim` or `make brew`.
 

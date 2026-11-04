@@ -26,7 +26,7 @@ COMMON := bash dirs nvim tmux git_config starship \
 .PHONY: all
 ifeq ($(UNAME_S),Darwin)
 # Configs first, so a failing Brewfile entry does not leave them unlinked
-all: $(COMMON) brew rustup
+all: $(COMMON) brew rustup iterm2
 else
 all: pacman makepkg_config rustup paru $(COMMON) \
 	sway swaylock rofi waybar \
@@ -43,6 +43,16 @@ brew:
 	@eval "$$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)" && \
 		brew update && \
 		brew bundle --file=$(DOTFILES)/Brewfile
+
+# iTerm2 loads profiles from this folder by itself. Copied, not linked, since
+# iTerm2 only watches the folder; re-run after editing the source.
+ITERM2_PROFILES := $(HOME)/Library/Application Support/iTerm2/DynamicProfiles
+
+.PHONY: iterm2
+iterm2:
+	@[ "$(UNAME_S)" = Darwin ] || { echo "iterm2: macOS only" >&2; exit 1; }
+	mkdir -p "$(ITERM2_PROFILES)"
+	install -m 644 $(DOTFILES)/.config/iterm2/tokyonight.json "$(ITERM2_PROFILES)/tokyonight.json"
 
 .PHONY: pacman_config
 pacman_config:
