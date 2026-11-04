@@ -29,6 +29,25 @@ install {
   'rust',
   'tsx',
   'typescript',
+
+  -- Injected into the languages above (Dockerfile RUN lines, regexes, format
+  -- strings, doc comments, code fences). The FileType auto-install below
+  -- never sees these, so without them those regions stay unhighlighted.
+  'bash',
+  'comment',
+  'css',
+  'html',
+  'jsdoc',
+  'json',
+  'luadoc',
+  'luap',
+  'printf',
+  'query',
+  'regex',
+  'toml',
+  'vim',
+  'vimdoc',
+  'yaml',
 }
 
 local function start(buf, lang)
